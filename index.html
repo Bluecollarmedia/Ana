@@ -29,11 +29,7 @@
     background-clip: text;
   }
 
-  header p {
-    color: #888;
-    margin-top: 0.4rem;
-    font-size: 0.9rem;
-  }
+  header p { color: #888; margin-top: 0.4rem; font-size: 0.9rem; }
 
   nav {
     display: flex;
@@ -56,7 +52,6 @@
   }
 
   nav button:hover { border-color: #e96cff; color: #fff; }
-
   nav button.active {
     background: linear-gradient(135deg, #e96cff, #ff6cb4);
     color: #fff;
@@ -65,7 +60,7 @@
   }
 
   #game-area {
-    max-width: 700px;
+    max-width: 720px;
     margin: 0 auto;
     padding: 1.5rem 1rem 3rem;
   }
@@ -83,12 +78,17 @@
 
   .stats {
     display: flex;
-    gap: 1rem;
+    gap: 0.6rem;
     font-size: 0.85rem;
     color: #aaa;
   }
 
-  .stats span { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 1rem; padding: 0.3rem 0.8rem; }
+  .stats span {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 1rem;
+    padding: 0.3rem 0.8rem;
+  }
 
   .btn {
     background: #1a1a1a;
@@ -115,8 +115,8 @@
   /* ── MEMORY MATCH ── */
   #memory-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
   }
 
   .mem-card {
@@ -129,18 +129,18 @@
     width: 100%; height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.4s;
-    border-radius: 8px;
+    transition: transform 0.35s;
+    border-radius: 5px;
   }
 
   .mem-card.flipped .mem-card-inner { transform: rotateY(180deg); }
   .mem-card.matched .mem-card-inner { transform: rotateY(180deg); }
-  .mem-card.matched .mem-card-front { box-shadow: 0 0 0 3px #e96cff; }
+  .mem-card.matched .mem-card-front { box-shadow: 0 0 0 2px #e96cff; }
 
   .mem-card-back, .mem-card-front {
     position: absolute;
     inset: 0;
-    border-radius: 8px;
+    border-radius: 5px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     overflow: hidden;
@@ -152,7 +152,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.8rem;
+    font-size: 0.8rem;
   }
 
   .mem-card-front {
@@ -160,60 +160,35 @@
     background: #111;
   }
 
-  .mem-card-front img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
   /* ── SLIDING PUZZLE ── */
   #slide-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 3px;
     background: #111;
     border: 2px solid #222;
     border-radius: 8px;
-    padding: 4px;
+    padding: 3px;
     touch-action: none;
   }
 
   .slide-tile {
     aspect-ratio: 1;
-    border-radius: 6px;
+    border-radius: 4px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.12s ease;
+    transition: transform 0.1s ease;
     position: relative;
-    background: #1a1a1a;
   }
 
-  .slide-tile:hover:not(.empty) { transform: scale(1.03); }
+  .slide-tile:hover:not(.empty) { transform: scale(1.04); }
+  .slide-tile.empty { background: #0a0a0a; cursor: default; }
 
-  .slide-tile.empty { background: #0d0d0d; cursor: default; }
-
-  .slide-tile img {
+  .slide-tile .tile-bg {
     width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    pointer-events: none;
-  }
-
-  .slide-tile .tile-num {
-    position: absolute;
-    bottom: 4px;
-    right: 6px;
-    font-size: 0.65rem;
-    color: rgba(255,255,255,0.35);
-    pointer-events: none;
   }
 
   /* ── JIGSAW ── */
-  #jigsaw-wrapper {
-    position: relative;
-    width: 100%;
-  }
-
   #jigsaw-board {
     position: relative;
     border: 2px dashed #333;
@@ -228,58 +203,49 @@
     top: 0; left: 0;
     width: 100%; height: 100%;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
     pointer-events: none;
     z-index: 0;
   }
 
-  .jigsaw-slot {
-    border: 1px solid #1e1e1e;
-  }
+  .jigsaw-slot { border: 1px solid #1a1a1a; }
 
   .jigsaw-piece {
     position: absolute;
     cursor: grab;
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
     border: 2px solid transparent;
-    transition: box-shadow 0.1s;
     z-index: 1;
     touch-action: none;
     user-select: none;
+    transition: box-shadow 0.1s;
   }
 
   .jigsaw-piece:active { cursor: grabbing; }
-  .jigsaw-piece.dragging { z-index: 100; box-shadow: 0 8px 24px rgba(233,108,255,0.4); }
-  .jigsaw-piece.placed { border-color: #e96cff; cursor: default; pointer-events: none; z-index: 1; }
+  .jigsaw-piece.dragging { z-index: 100; box-shadow: 0 6px 20px rgba(233,108,255,0.5); }
+  .jigsaw-piece.placed { border-color: rgba(233,108,255,0.6); cursor: default; pointer-events: none; z-index: 1; }
 
-  .jigsaw-piece img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-    pointer-events: none;
-  }
+  .jigsaw-piece .tile-bg { width: 100%; height: 100%; }
 
   /* ── FACE REVEAL ── */
   #reveal-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 3px;
   }
 
   .reveal-tile {
     aspect-ratio: 1;
     position: relative;
-    border-radius: 6px;
+    border-radius: 4px;
     overflow: hidden;
     cursor: pointer;
   }
 
-  .reveal-tile img {
+  .reveal-tile .tile-bg {
     width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
   }
 
   .reveal-cover {
@@ -290,14 +256,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    transition: opacity 0.4s, transform 0.4s;
-    border-radius: 6px;
+    font-size: 0.8rem;
+    transition: opacity 0.35s, transform 0.35s;
+    border-radius: 4px;
   }
 
   .reveal-tile.revealed .reveal-cover {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.7);
     pointer-events: none;
   }
 
@@ -306,7 +272,7 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.75);
+    background: rgba(0,0,0,0.78);
     z-index: 999;
     align-items: center;
     justify-content: center;
@@ -334,15 +300,13 @@
   }
 
   .win-box p { color: #aaa; margin-bottom: 1.5rem; }
-
-  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>Ana's Face Games</h1>
-  <p>Four ways to play with one face</p>
+  <p>8×8 · 64 pieces · good luck</p>
 </header>
 
 <nav>
@@ -363,16 +327,35 @@
 </div>
 
 <script>
-const IMG = 'ana.jpg';
-const GRID = 4; // 4x4
-const N = GRID * GRID; // 16
+const IMG  = 'ana.jpg';
+const GRID = 8;
+const N    = GRID * GRID; // 64
 
-// ── Utility ──────────────────────────────────────────────
 function $(id) { return document.getElementById(id); }
+
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  return m > 0 ? `${m}m ${s % 60}s` : `${s}s`;
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// Returns inline style string for a background-image tile at (col, row)
+function bgStyle(col, row) {
+  const px = (col / (GRID - 1) * 100).toFixed(3);
+  const py = (row / (GRID - 1) * 100).toFixed(3);
+  return `background-image:url(${IMG});background-size:${GRID*100}% ${GRID*100}%;background-position:${px}% ${py}%;`;
+}
 
 function showWin(title, msg, replayFn) {
   $('win-title').textContent = title;
-  $('win-msg').textContent = msg;
+  $('win-msg').textContent   = msg;
   $('win-overlay').classList.add('show');
   $('win-replay').onclick = () => {
     $('win-overlay').classList.remove('show');
@@ -380,40 +363,23 @@ function showWin(title, msg, replayFn) {
   };
 }
 
-// Preload image and get its natural dimensions
-let imgLoaded = false;
-const preloadImg = new Image();
-preloadImg.src = IMG;
-
-function fmtTime(s) {
-  const m = Math.floor(s / 60);
-  return m > 0 ? `${m}m ${s % 60}s` : `${s}s`;
-}
-
-// ── Game selector ─────────────────────────────────────────
-let currentGame = null;
 let gameCleanup = null;
 
 function selectGame(name) {
   if (gameCleanup) { gameCleanup(); gameCleanup = null; }
   $('win-overlay').classList.remove('show');
-
   document.querySelectorAll('nav button').forEach((b, i) => {
-    const names = ['memory', 'slide', 'jigsaw', 'reveal'];
-    b.classList.toggle('active', names[i] === name);
+    b.classList.toggle('active', ['memory','slide','jigsaw','reveal'][i] === name);
   });
-
-  currentGame = name;
   const area = $('game-area');
-
-  if (name === 'memory')  { area.innerHTML = memoryHTML();  gameCleanup = initMemory(); }
-  if (name === 'slide')   { area.innerHTML = slideHTML();   gameCleanup = initSlide(); }
-  if (name === 'jigsaw')  { area.innerHTML = jigsawHTML();  gameCleanup = initJigsaw(); }
-  if (name === 'reveal')  { area.innerHTML = revealHTML();  gameCleanup = initReveal(); }
+  if (name === 'memory') { area.innerHTML = memoryHTML();  gameCleanup = initMemory(); }
+  if (name === 'slide')  { area.innerHTML = slideHTML();   gameCleanup = initSlide();  }
+  if (name === 'jigsaw') { area.innerHTML = jigsawHTML();  gameCleanup = initJigsaw(); }
+  if (name === 'reveal') { area.innerHTML = revealHTML();  gameCleanup = initReveal(); }
 }
 
 // ══════════════════════════════════════════════════════════
-// 1. MEMORY MATCH
+// 1. MEMORY MATCH  (8×8 = 64 cards, 32 unique pairs)
 // ══════════════════════════════════════════════════════════
 function memoryHTML() {
   return `
@@ -429,49 +395,37 @@ function memoryHTML() {
 }
 
 function initMemory() {
-  const indices = Array.from({length: N/2}, (_, i) => i); // 8 unique pieces
-  const pairs = [...indices, ...indices];
-  shuffle(pairs);
+  // 32 unique pieces → 64 cards in 8×8 grid
+  const uniquePieces = Array.from({length: N / 2}, (_, i) => i);
+  const deck = shuffle([...uniquePieces, ...uniquePieces]);
 
   let moves = 0, matched = 0, flipped = [], locked = false;
-  let seconds = 0, timerInterval = null;
+  let seconds = 0, timer = null;
 
   const grid = $('memory-grid');
   grid.innerHTML = '';
 
-  function startTimer() {
-    if (timerInterval) return;
-    timerInterval = setInterval(() => {
-      seconds++;
-      const m = Math.floor(seconds / 60), s = seconds % 60;
-      $('mem-time').textContent = `${m}:${s.toString().padStart(2,'0')}`;
-    }, 1000);
-  }
-
-  pairs.forEach((pieceIdx, cardIdx) => {
+  deck.forEach(pieceIdx => {
     const col = pieceIdx % GRID;
     const row = Math.floor(pieceIdx / GRID);
 
     const card = document.createElement('div');
     card.className = 'mem-card';
     card.dataset.piece = pieceIdx;
-
     card.innerHTML = `
       <div class="mem-card-inner">
         <div class="mem-card-back">✦</div>
-        <div class="mem-card-front">
-          <img src="${IMG}" alt="" style="
-            object-position: ${-(col*100)}% ${-(row*100)}%;
-            width: ${GRID*100}%;
-            height: ${GRID*100}%;
-            max-width: none;
-          ">
-        </div>
+        <div class="mem-card-front" style="${bgStyle(col, row)}"></div>
       </div>`;
 
     card.addEventListener('click', () => {
       if (locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-      startTimer();
+      if (!timer) timer = setInterval(() => {
+        seconds++;
+        const m = Math.floor(seconds/60), s = seconds%60;
+        $('mem-time').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      }, 1000);
+
       card.classList.add('flipped');
       flipped.push(card);
 
@@ -482,11 +436,10 @@ function initMemory() {
         const [a, b] = flipped;
         if (a.dataset.piece === b.dataset.piece) {
           a.classList.add('matched'); b.classList.add('matched');
-          matched += 2;
-          flipped = []; locked = false;
-          if (matched === pairs.length) {
-            clearInterval(timerInterval);
-            setTimeout(() => showWin('Matched!', `${moves} moves in ${fmtTime(seconds)}`, () => selectGame('memory')), 400);
+          matched += 2; flipped = []; locked = false;
+          if (matched === deck.length) {
+            clearInterval(timer);
+            setTimeout(() => showWin('Matched!', `${moves} moves · ${fmtTime(seconds)}`, () => selectGame('memory')), 400);
           }
         } else {
           setTimeout(() => {
@@ -500,11 +453,11 @@ function initMemory() {
     grid.appendChild(card);
   });
 
-  return () => clearInterval(timerInterval);
+  return () => clearInterval(timer);
 }
 
 // ══════════════════════════════════════════════════════════
-// 2. SLIDING PUZZLE
+// 2. SLIDING PUZZLE  (8×8 = 63 tiles + 1 empty)
 // ══════════════════════════════════════════════════════════
 function slideHTML() {
   return `
@@ -520,30 +473,26 @@ function slideHTML() {
 }
 
 function initSlide() {
-  let tiles = Array.from({length: N}, (_, i) => i); // 0 = empty
-  let moves = 0, seconds = 0, timerInterval = null, started = false;
+  let tiles = Array.from({length: N}, (_, i) => i); // 0 = empty slot
+  let moves = 0, seconds = 0, timer = null, started = false;
 
-  // Scramble ensuring solvability
-  function scramble() {
-    let emptyIdx = 0;
-    for (let i = 0; i < 500; i++) {
-      const neighbors = getNeighbors(emptyIdx);
-      const rand = neighbors[Math.floor(Math.random() * neighbors.length)];
-      [tiles[emptyIdx], tiles[rand]] = [tiles[rand], tiles[emptyIdx]];
-      emptyIdx = rand;
-    }
-  }
-
-  function getNeighbors(idx) {
+  function neighbors(idx) {
     const r = Math.floor(idx / GRID), c = idx % GRID, n = [];
-    if (r > 0) n.push(idx - GRID);
+    if (r > 0)      n.push(idx - GRID);
     if (r < GRID-1) n.push(idx + GRID);
-    if (c > 0) n.push(idx - 1);
+    if (c > 0)      n.push(idx - 1);
     if (c < GRID-1) n.push(idx + 1);
     return n;
   }
 
-  scramble();
+  // Scramble via random valid moves
+  let emptyPos = 0;
+  for (let i = 0; i < 1000; i++) {
+    const nb = neighbors(emptyPos);
+    const pick = nb[Math.floor(Math.random() * nb.length)];
+    [tiles[emptyPos], tiles[pick]] = [tiles[pick], tiles[emptyPos]];
+    emptyPos = pick;
+  }
 
   const grid = $('slide-grid');
 
@@ -551,16 +500,16 @@ function initSlide() {
     grid.innerHTML = '';
     tiles.forEach((val, pos) => {
       const tile = document.createElement('div');
-      tile.className = 'slide-tile' + (val === 0 ? ' empty' : '');
-      if (val !== 0) {
+      if (val === 0) {
+        tile.className = 'slide-tile empty';
+      } else {
+        tile.className = 'slide-tile';
         const col = (val - 1) % GRID;
         const row = Math.floor((val - 1) / GRID);
-        tile.innerHTML = `<img src="${IMG}" alt="" style="
-          object-position: ${-(col*100)}% ${-(row*100)}%;
-          width: ${GRID*100}%;
-          height: ${GRID*100}%;
-          max-width: none;
-        "><span class="tile-num">${val}</span>`;
+        const bg = document.createElement('div');
+        bg.className = 'tile-bg';
+        bg.style.cssText = bgStyle(col, row);
+        tile.appendChild(bg);
         tile.addEventListener('click', () => clickTile(pos));
       }
       grid.appendChild(tile);
@@ -568,37 +517,32 @@ function initSlide() {
   }
 
   function clickTile(pos) {
-    const emptyIdx = tiles.indexOf(0);
-    if (!getNeighbors(emptyIdx).includes(pos)) return;
-    if (!started) { started = true; startTimer(); }
-    [tiles[emptyIdx], tiles[pos]] = [tiles[pos], tiles[emptyIdx]];
+    const ei = tiles.indexOf(0);
+    if (!neighbors(ei).includes(pos)) return;
+    if (!started) {
+      started = true;
+      timer = setInterval(() => {
+        seconds++;
+        const m = Math.floor(seconds/60), s = seconds%60;
+        $('slide-time').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      }, 1000);
+    }
+    [tiles[ei], tiles[pos]] = [tiles[pos], tiles[ei]];
     moves++;
     $('slide-moves').textContent = `Moves: ${moves}`;
     render();
-    if (checkWin()) {
-      clearInterval(timerInterval);
-      setTimeout(() => showWin('Solved!', `${moves} moves in ${fmtTime(seconds)}`, () => selectGame('slide')), 200);
+    if (tiles.every((v, i) => i === N - 1 ? v === 0 : v === i + 1)) {
+      clearInterval(timer);
+      setTimeout(() => showWin('Solved!', `${moves} moves · ${fmtTime(seconds)}`, () => selectGame('slide')), 200);
     }
   }
 
-  function checkWin() {
-    return tiles.every((v, i) => (i === N-1 ? v === 0 : v === i+1));
-  }
-
-  function startTimer() {
-    timerInterval = setInterval(() => {
-      seconds++;
-      const m = Math.floor(seconds/60), s = seconds%60;
-      $('slide-time').textContent = `${m}:${s.toString().padStart(2,'0')}`;
-    }, 1000);
-  }
-
   render();
-  return () => clearInterval(timerInterval);
+  return () => clearInterval(timer);
 }
 
 // ══════════════════════════════════════════════════════════
-// 3. JIGSAW
+// 3. JIGSAW  (8×8 = 64 draggable pieces)
 // ══════════════════════════════════════════════════════════
 function jigsawHTML() {
   return `
@@ -609,64 +553,63 @@ function jigsawHTML() {
     </div>
     <button class="btn" onclick="selectGame('jigsaw')">Restart</button>
   </div>
-  <div id="jigsaw-wrapper">
-    <div id="jigsaw-board">
-      <div id="jigsaw-target"></div>
-    </div>
+  <div id="jigsaw-board">
+    <div id="jigsaw-target"></div>
   </div>`;
 }
 
 function initJigsaw() {
   const board = $('jigsaw-board');
-  const target = $('jigsaw-target');
-
-  // Make board square
-  const bw = board.offsetWidth || 400;
+  const bw    = board.offsetWidth || 480;
   board.style.height = bw + 'px';
 
-  const pieceW = bw / GRID;
-  const pieceH = bw / GRID;
-  const snapDist = pieceW * 0.35;
-
+  const pw = bw / GRID;
+  const ph = bw / GRID;
+  const snap = pw * 0.4;
   let placed = 0;
 
-  // Build target grid slots
-  target.innerHTML = '';
+  // Target grid overlay
+  const target = $('jigsaw-target');
   for (let i = 0; i < N; i++) {
     const slot = document.createElement('div');
     slot.className = 'jigsaw-slot';
     target.appendChild(slot);
   }
 
-  // Scatter positions (avoid overlapping too much)
-  const positions = shuffledScatter(N, bw, pieceW, pieceH);
+  // Scatter starting positions (prevent heavy overlaps)
+  const positions = [];
+  for (let i = 0; i < N; i++) {
+    let x, y, ok, attempts = 0;
+    do {
+      ok = true;
+      x = Math.random() * (bw - pw);
+      y = Math.random() * (bw - ph);
+      for (const p of positions) {
+        if (Math.abs(p.x - x) < pw * 0.5 && Math.abs(p.y - y) < ph * 0.5) { ok = false; break; }
+      }
+    } while (!ok && ++attempts < 40);
+    positions.push({x, y});
+  }
+  shuffle(positions);
 
-  // Create pieces
   for (let i = 0; i < N; i++) {
     const col = i % GRID;
     const row = Math.floor(i / GRID);
 
     const piece = document.createElement('div');
     piece.className = 'jigsaw-piece';
-    piece.style.width = pieceW + 'px';
-    piece.style.height = pieceH + 'px';
-    piece.style.left = positions[i].x + 'px';
-    piece.style.top = positions[i].y + 'px';
+    piece.style.cssText = `width:${pw}px;height:${ph}px;left:${positions[i].x}px;top:${positions[i].y}px;`;
     piece.dataset.idx = i;
 
-    piece.innerHTML = `<img src="${IMG}" alt="" style="
-      object-position: ${-(col*100)}% ${-(row*100)}%;
-      width: ${GRID*100}%;
-      height: ${GRID*100}%;
-      max-width: none;
-    ">`;
+    const bg = document.createElement('div');
+    bg.className = 'tile-bg';
+    bg.style.cssText = bgStyle(col, row);
+    piece.appendChild(bg);
 
-    makeDraggable(piece, board, pieceW, pieceH, snapDist, () => {
+    makeDraggable(piece, board, pw, ph, snap, col, row, () => {
       placed++;
       $('jig-placed').textContent = `Placed: ${placed} / ${N}`;
-      if (placed === N) {
-        setTimeout(() => showWin('Assembled!', 'The face is complete!', () => selectGame('jigsaw')), 300);
-      }
+      if (placed === N) setTimeout(() => showWin('Assembled!', 'The face is complete!', () => selectGame('jigsaw')), 300);
     });
 
     board.appendChild(piece);
@@ -675,92 +618,55 @@ function initJigsaw() {
   return () => {};
 }
 
-function shuffledScatter(n, boardSize, pw, ph) {
-  const positions = [];
-  for (let i = 0; i < n; i++) {
-    let x, y, ok;
-    let attempts = 0;
-    do {
-      ok = true;
-      x = Math.random() * (boardSize - pw);
-      y = Math.random() * (boardSize - ph);
-      for (const p of positions) {
-        if (Math.abs(p.x - x) < pw * 0.6 && Math.abs(p.y - y) < ph * 0.6) { ok = false; break; }
-      }
-      attempts++;
-    } while (!ok && attempts < 30);
-    positions.push({x, y});
-  }
-  return positions;
-}
+function makeDraggable(el, board, pw, ph, snap, targetCol, targetRow, onPlace) {
+  let sx, sy, sl, st, dragging = false;
 
-function makeDraggable(el, board, pw, ph, snapDist, onPlace) {
-  const idx = parseInt(el.dataset.idx);
-  const targetCol = idx % GRID;
-  const targetRow = Math.floor(idx / GRID);
-
-  let startX, startY, startLeft, startTop, dragging = false;
-
-  function getTargetPos() {
-    const bw = board.offsetWidth;
-    const bh = board.offsetHeight;
-    return {
-      x: targetCol * (bw / GRID),
-      y: targetRow * (bh / GRID)
-    };
+  function targetPos() {
+    const bw = board.offsetWidth, bh = board.offsetHeight;
+    return { x: targetCol * (bw / GRID), y: targetRow * (bh / GRID) };
   }
 
-  function onDown(cx, cy) {
+  function down(cx, cy) {
     if (el.classList.contains('placed')) return;
     dragging = true;
-    const rect = board.getBoundingClientRect();
-    startX = cx - rect.left;
-    startY = cy - rect.top;
-    startLeft = parseFloat(el.style.left);
-    startTop = parseFloat(el.style.top);
+    const r = board.getBoundingClientRect();
+    sx = cx - r.left; sy = cy - r.top;
+    sl = parseFloat(el.style.left); st = parseFloat(el.style.top);
     el.classList.add('dragging');
-    el.style.zIndex = 100;
   }
 
-  function onMove(cx, cy) {
+  function move(cx, cy) {
     if (!dragging) return;
-    const rect = board.getBoundingClientRect();
+    const r  = board.getBoundingClientRect();
     const bw = board.offsetWidth, bh = board.offsetHeight;
-    let newLeft = cx - rect.left - (startX - startLeft);
-    let newTop  = cy - rect.top  - (startY - startTop);
-    newLeft = Math.max(0, Math.min(bw - pw, newLeft));
-    newTop  = Math.max(0, Math.min(bh - ph, newTop));
-    el.style.left = newLeft + 'px';
-    el.style.top  = newTop  + 'px';
+    el.style.left = Math.max(0, Math.min(bw - pw, cx - r.left - (sx - sl))) + 'px';
+    el.style.top  = Math.max(0, Math.min(bh - ph, cy - r.top  - (sy - st))) + 'px';
   }
 
-  function onUp() {
+  function up() {
     if (!dragging) return;
     dragging = false;
     el.classList.remove('dragging');
-    const tp = getTargetPos();
-    const curLeft = parseFloat(el.style.left);
-    const curTop  = parseFloat(el.style.top);
-    if (Math.abs(curLeft - tp.x) < snapDist && Math.abs(curTop - tp.y) < snapDist) {
-      el.style.left = tp.x + 'px';
-      el.style.top  = tp.y + 'px';
+    const tp = targetPos();
+    const cl = parseFloat(el.style.left), ct = parseFloat(el.style.top);
+    if (Math.abs(cl - tp.x) < snap && Math.abs(ct - tp.y) < snap) {
+      el.style.left = tp.x + 'px'; el.style.top = tp.y + 'px';
       el.style.zIndex = 1;
       el.classList.add('placed');
       onPlace();
     }
   }
 
-  el.addEventListener('mousedown', e => { e.preventDefault(); onDown(e.clientX, e.clientY); });
-  window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
-  window.addEventListener('mouseup', onUp);
-
-  el.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; onDown(t.clientX, t.clientY); }, {passive: false});
-  window.addEventListener('touchmove', e => { const t = e.touches[0]; onMove(t.clientX, t.clientY); }, {passive: true});
-  window.addEventListener('touchend', onUp);
+  el.addEventListener('mousedown', e => { e.preventDefault(); down(e.clientX, e.clientY); });
+  window.addEventListener('mousemove', e => move(e.clientX, e.clientY));
+  window.addEventListener('mouseup', up);
+  el.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; down(t.clientX, t.clientY); }, {passive: false});
+  window.addEventListener('touchmove', e => { const t = e.touches[0]; move(t.clientX, t.clientY); }, {passive: true});
+  window.addEventListener('touchend', up);
 }
 
 // ══════════════════════════════════════════════════════════
-// 4. FACE REVEAL
+// 4. FACE REVEAL  (8×8 = 64 tiles to click)
 // ══════════════════════════════════════════════════════════
 function revealHTML() {
   return `
@@ -787,25 +693,25 @@ function initReveal() {
     const tile = document.createElement('div');
     tile.className = 'reveal-tile';
 
-    tile.innerHTML = `
-      <img src="${IMG}" alt="" style="
-        object-position: ${-(col*100)}% ${-(row*100)}%;
-        width: ${GRID*100}%;
-        height: ${GRID*100}%;
-        max-width: none;
-        display: block;
-      ">
-      <div class="reveal-cover">✦</div>`;
+    const bg = document.createElement('div');
+    bg.className = 'tile-bg';
+    bg.style.cssText = bgStyle(col, row);
+
+    const cover = document.createElement('div');
+    cover.className = 'reveal-cover';
+    cover.textContent = '✦';
+
+    tile.appendChild(bg);
+    tile.appendChild(cover);
 
     tile.addEventListener('click', () => {
       if (tile.classList.contains('revealed')) return;
-      clicks++;
+      clicks++; revealed++;
       tile.classList.add('revealed');
-      revealed++;
       $('rev-clicks').textContent = `Clicks: ${clicks}`;
-      $('rev-left').textContent = `Left: ${N - revealed}`;
+      $('rev-left').textContent   = `Left: ${N - revealed}`;
       if (revealed === N) {
-        setTimeout(() => showWin('Revealed!', `You uncovered every tile in ${clicks} clicks!`, () => selectGame('reveal')), 400);
+        setTimeout(() => showWin('Revealed!', `Uncovered in ${clicks} clicks!`, () => selectGame('reveal')), 400);
       }
     });
 
@@ -815,16 +721,7 @@ function initReveal() {
   return () => {};
 }
 
-// ── Helpers ───────────────────────────────────────────────
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-// Start on Memory Match
+// Boot
 selectGame('memory');
 </script>
 </body>
