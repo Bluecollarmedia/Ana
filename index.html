@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ana's Face Games</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0d0d0d;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #e96cff, #ff6cb4, #ffd86c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    color: #888;
+    margin-top: 0.4rem;
+    font-size: 0.9rem;
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding: 1.2rem 1rem;
+    border-bottom: 1px solid #222;
+  }
+
+  nav button {
+    background: #1a1a1a;
+    color: #ccc;
+    border: 1px solid #333;
+    border-radius: 2rem;
+    padding: 0.55rem 1.3rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  nav button:hover { border-color: #e96cff; color: #fff; }
+
+  nav button.active {
+    background: linear-gradient(135deg, #e96cff, #ff6cb4);
+    color: #fff;
+    border-color: transparent;
+    font-weight: 600;
+  }
+
+  #game-area {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .game-title { font-size: 1.3rem; font-weight: 600; }
+
+  .stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #aaa;
+  }
+
+  .stats span { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 1rem; padding: 0.3rem 0.8rem; }
+
+  .btn {
+    background: #1a1a1a;
+    color: #ddd;
+    border: 1px solid #333;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn:hover { border-color: #e96cff; color: #fff; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #e96cff, #ff6cb4);
+    border-color: transparent;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+
+  /* ── MEMORY MATCH ── */
+  #memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .mem-card {
+    aspect-ratio: 1;
+    perspective: 600px;
+    cursor: pointer;
+  }
+
+  .mem-card-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.4s;
+    border-radius: 8px;
+  }
+
+  .mem-card.flipped .mem-card-inner { transform: rotateY(180deg); }
+  .mem-card.matched .mem-card-inner { transform: rotateY(180deg); }
+  .mem-card.matched .mem-card-front { box-shadow: 0 0 0 3px #e96cff; }
+
+  .mem-card-back, .mem-card-front {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+  }
+
+  .mem-card-back {
+    background: linear-gradient(135deg, #1e1e2e, #2a1a3e);
+    border: 1px solid #3a2a4e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
+
+  .mem-card-front {
+    transform: rotateY(180deg);
+    background: #111;
+  }
+
+  .mem-card-front img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ── SLIDING PUZZLE ── */
+  #slide-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    background: #111;
+    border: 2px solid #222;
+    border-radius: 8px;
+    padding: 4px;
+    touch-action: none;
+  }
+
+  .slide-tile {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.12s ease;
+    position: relative;
+    background: #1a1a1a;
+  }
+
+  .slide-tile:hover:not(.empty) { transform: scale(1.03); }
+
+  .slide-tile.empty { background: #0d0d0d; cursor: default; }
+
+  .slide-tile img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+
+  .slide-tile .tile-num {
+    position: absolute;
+    bottom: 4px;
+    right: 6px;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.35);
+    pointer-events: none;
+  }
+
+  /* ── JIGSAW ── */
+  #jigsaw-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  #jigsaw-board {
+    position: relative;
+    border: 2px dashed #333;
+    border-radius: 8px;
+    background: #111;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  #jigsaw-target {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .jigsaw-slot {
+    border: 1px solid #1e1e1e;
+  }
+
+  .jigsaw-piece {
+    position: absolute;
+    cursor: grab;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: box-shadow 0.1s;
+    z-index: 1;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .jigsaw-piece:active { cursor: grabbing; }
+  .jigsaw-piece.dragging { z-index: 100; box-shadow: 0 8px 24px rgba(233,108,255,0.4); }
+  .jigsaw-piece.placed { border-color: #e96cff; cursor: default; pointer-events: none; z-index: 1; }
+
+  .jigsaw-piece img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+
+  /* ── FACE REVEAL ── */
+  #reveal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+
+  .reveal-tile {
+    aspect-ratio: 1;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .reveal-tile img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .reveal-cover {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1e1e2e, #2a1a3e);
+    border: 1px solid #3a2a4e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: opacity 0.4s, transform 0.4s;
+    border-radius: 6px;
+  }
+
+  .reveal-tile.revealed .reveal-cover {
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+  }
+
+  /* ── WIN OVERLAY ── */
+  .win-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .win-overlay.show { display: flex; }
+
+  .win-box {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    max-width: 320px;
+    width: 90%;
+  }
+
+  .win-box h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #e96cff, #ff6cb4, #ffd86c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .win-box p { color: #aaa; margin-bottom: 1.5rem; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ana's Face Games</h1>
+  <p>Four ways to play with one face</p>
+</header>
+
+<nav>
+  <button class="active" onclick="selectGame('memory')">Memory Match</button>
+  <button onclick="selectGame('slide')">Sliding Puzzle</button>
+  <button onclick="selectGame('jigsaw')">Jigsaw</button>
+  <button onclick="selectGame('reveal')">Face Reveal</button>
+</nav>
+
+<div id="game-area"></div>
+
+<div class="win-overlay" id="win-overlay">
+  <div class="win-box">
+    <h2 id="win-title">You Did It!</h2>
+    <p id="win-msg"></p>
+    <button class="btn btn-primary" id="win-replay">Play Again</button>
+  </div>
+</div>
+
+<script>
+const IMG = 'ana.jpg';
+const GRID = 4; // 4x4
+const N = GRID * GRID; // 16
+
+// ── Utility ──────────────────────────────────────────────
+function $(id) { return document.getElementById(id); }
+
+function showWin(title, msg, replayFn) {
+  $('win-title').textContent = title;
+  $('win-msg').textContent = msg;
+  $('win-overlay').classList.add('show');
+  $('win-replay').onclick = () => {
+    $('win-overlay').classList.remove('show');
+    replayFn();
+  };
+}
+
+// Preload image and get its natural dimensions
+let imgLoaded = false;
+const preloadImg = new Image();
+preloadImg.src = IMG;
+
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  return m > 0 ? `${m}m ${s % 60}s` : `${s}s`;
+}
+
+// ── Game selector ─────────────────────────────────────────
+let currentGame = null;
+let gameCleanup = null;
+
+function selectGame(name) {
+  if (gameCleanup) { gameCleanup(); gameCleanup = null; }
+  $('win-overlay').classList.remove('show');
+
+  document.querySelectorAll('nav button').forEach((b, i) => {
+    const names = ['memory', 'slide', 'jigsaw', 'reveal'];
+    b.classList.toggle('active', names[i] === name);
+  });
+
+  currentGame = name;
+  const area = $('game-area');
+
+  if (name === 'memory')  { area.innerHTML = memoryHTML();  gameCleanup = initMemory(); }
+  if (name === 'slide')   { area.innerHTML = slideHTML();   gameCleanup = initSlide(); }
+  if (name === 'jigsaw')  { area.innerHTML = jigsawHTML();  gameCleanup = initJigsaw(); }
+  if (name === 'reveal')  { area.innerHTML = revealHTML();  gameCleanup = initReveal(); }
+}
+
+// ══════════════════════════════════════════════════════════
+// 1. MEMORY MATCH
+// ══════════════════════════════════════════════════════════
+function memoryHTML() {
+  return `
+  <div class="game-header">
+    <span class="game-title">Memory Match</span>
+    <div class="stats">
+      <span id="mem-moves">Moves: 0</span>
+      <span id="mem-time">0:00</span>
+    </div>
+    <button class="btn" onclick="selectGame('memory')">Restart</button>
+  </div>
+  <div id="memory-grid"></div>`;
+}
+
+function initMemory() {
+  const indices = Array.from({length: N/2}, (_, i) => i); // 8 unique pieces
+  const pairs = [...indices, ...indices];
+  shuffle(pairs);
+
+  let moves = 0, matched = 0, flipped = [], locked = false;
+  let seconds = 0, timerInterval = null;
+
+  const grid = $('memory-grid');
+  grid.innerHTML = '';
+
+  function startTimer() {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+      seconds++;
+      const m = Math.floor(seconds / 60), s = seconds % 60;
+      $('mem-time').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    }, 1000);
+  }
+
+  pairs.forEach((pieceIdx, cardIdx) => {
+    const col = pieceIdx % GRID;
+    const row = Math.floor(pieceIdx / GRID);
+
+    const card = document.createElement('div');
+    card.className = 'mem-card';
+    card.dataset.piece = pieceIdx;
+
+    card.innerHTML = `
+      <div class="mem-card-inner">
+        <div class="mem-card-back">✦</div>
+        <div class="mem-card-front">
+          <img src="${IMG}" alt="" style="
+            object-position: ${-(col*100)}% ${-(row*100)}%;
+            width: ${GRID*100}%;
+            height: ${GRID*100}%;
+            max-width: none;
+          ">
+        </div>
+      </div>`;
+
+    card.addEventListener('click', () => {
+      if (locked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+      startTimer();
+      card.classList.add('flipped');
+      flipped.push(card);
+
+      if (flipped.length === 2) {
+        moves++;
+        $('mem-moves').textContent = `Moves: ${moves}`;
+        locked = true;
+        const [a, b] = flipped;
+        if (a.dataset.piece === b.dataset.piece) {
+          a.classList.add('matched'); b.classList.add('matched');
+          matched += 2;
+          flipped = []; locked = false;
+          if (matched === pairs.length) {
+            clearInterval(timerInterval);
+            setTimeout(() => showWin('Matched!', `${moves} moves in ${fmtTime(seconds)}`, () => selectGame('memory')), 400);
+          }
+        } else {
+          setTimeout(() => {
+            a.classList.remove('flipped'); b.classList.remove('flipped');
+            flipped = []; locked = false;
+          }, 900);
+        }
+      }
+    });
+
+    grid.appendChild(card);
+  });
+
+  return () => clearInterval(timerInterval);
+}
+
+// ══════════════════════════════════════════════════════════
+// 2. SLIDING PUZZLE
+// ══════════════════════════════════════════════════════════
+function slideHTML() {
+  return `
+  <div class="game-header">
+    <span class="game-title">Sliding Puzzle</span>
+    <div class="stats">
+      <span id="slide-moves">Moves: 0</span>
+      <span id="slide-time">0:00</span>
+    </div>
+    <button class="btn" onclick="selectGame('slide')">Restart</button>
+  </div>
+  <div id="slide-grid"></div>`;
+}
+
+function initSlide() {
+  let tiles = Array.from({length: N}, (_, i) => i); // 0 = empty
+  let moves = 0, seconds = 0, timerInterval = null, started = false;
+
+  // Scramble ensuring solvability
+  function scramble() {
+    let emptyIdx = 0;
+    for (let i = 0; i < 500; i++) {
+      const neighbors = getNeighbors(emptyIdx);
+      const rand = neighbors[Math.floor(Math.random() * neighbors.length)];
+      [tiles[emptyIdx], tiles[rand]] = [tiles[rand], tiles[emptyIdx]];
+      emptyIdx = rand;
+    }
+  }
+
+  function getNeighbors(idx) {
+    const r = Math.floor(idx / GRID), c = idx % GRID, n = [];
+    if (r > 0) n.push(idx - GRID);
+    if (r < GRID-1) n.push(idx + GRID);
+    if (c > 0) n.push(idx - 1);
+    if (c < GRID-1) n.push(idx + 1);
+    return n;
+  }
+
+  scramble();
+
+  const grid = $('slide-grid');
+
+  function render() {
+    grid.innerHTML = '';
+    tiles.forEach((val, pos) => {
+      const tile = document.createElement('div');
+      tile.className = 'slide-tile' + (val === 0 ? ' empty' : '');
+      if (val !== 0) {
+        const col = (val - 1) % GRID;
+        const row = Math.floor((val - 1) / GRID);
+        tile.innerHTML = `<img src="${IMG}" alt="" style="
+          object-position: ${-(col*100)}% ${-(row*100)}%;
+          width: ${GRID*100}%;
+          height: ${GRID*100}%;
+          max-width: none;
+        "><span class="tile-num">${val}</span>`;
+        tile.addEventListener('click', () => clickTile(pos));
+      }
+      grid.appendChild(tile);
+    });
+  }
+
+  function clickTile(pos) {
+    const emptyIdx = tiles.indexOf(0);
+    if (!getNeighbors(emptyIdx).includes(pos)) return;
+    if (!started) { started = true; startTimer(); }
+    [tiles[emptyIdx], tiles[pos]] = [tiles[pos], tiles[emptyIdx]];
+    moves++;
+    $('slide-moves').textContent = `Moves: ${moves}`;
+    render();
+    if (checkWin()) {
+      clearInterval(timerInterval);
+      setTimeout(() => showWin('Solved!', `${moves} moves in ${fmtTime(seconds)}`, () => selectGame('slide')), 200);
+    }
+  }
+
+  function checkWin() {
+    return tiles.every((v, i) => (i === N-1 ? v === 0 : v === i+1));
+  }
+
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      seconds++;
+      const m = Math.floor(seconds/60), s = seconds%60;
+      $('slide-time').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    }, 1000);
+  }
+
+  render();
+  return () => clearInterval(timerInterval);
+}
+
+// ══════════════════════════════════════════════════════════
+// 3. JIGSAW
+// ══════════════════════════════════════════════════════════
+function jigsawHTML() {
+  return `
+  <div class="game-header">
+    <span class="game-title">Jigsaw</span>
+    <div class="stats">
+      <span id="jig-placed">Placed: 0 / ${N}</span>
+    </div>
+    <button class="btn" onclick="selectGame('jigsaw')">Restart</button>
+  </div>
+  <div id="jigsaw-wrapper">
+    <div id="jigsaw-board">
+      <div id="jigsaw-target"></div>
+    </div>
+  </div>`;
+}
+
+function initJigsaw() {
+  const board = $('jigsaw-board');
+  const target = $('jigsaw-target');
+
+  // Make board square
+  const bw = board.offsetWidth || 400;
+  board.style.height = bw + 'px';
+
+  const pieceW = bw / GRID;
+  const pieceH = bw / GRID;
+  const snapDist = pieceW * 0.35;
+
+  let placed = 0;
+
+  // Build target grid slots
+  target.innerHTML = '';
+  for (let i = 0; i < N; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'jigsaw-slot';
+    target.appendChild(slot);
+  }
+
+  // Scatter positions (avoid overlapping too much)
+  const positions = shuffledScatter(N, bw, pieceW, pieceH);
+
+  // Create pieces
+  for (let i = 0; i < N; i++) {
+    const col = i % GRID;
+    const row = Math.floor(i / GRID);
+
+    const piece = document.createElement('div');
+    piece.className = 'jigsaw-piece';
+    piece.style.width = pieceW + 'px';
+    piece.style.height = pieceH + 'px';
+    piece.style.left = positions[i].x + 'px';
+    piece.style.top = positions[i].y + 'px';
+    piece.dataset.idx = i;
+
+    piece.innerHTML = `<img src="${IMG}" alt="" style="
+      object-position: ${-(col*100)}% ${-(row*100)}%;
+      width: ${GRID*100}%;
+      height: ${GRID*100}%;
+      max-width: none;
+    ">`;
+
+    makeDraggable(piece, board, pieceW, pieceH, snapDist, () => {
+      placed++;
+      $('jig-placed').textContent = `Placed: ${placed} / ${N}`;
+      if (placed === N) {
+        setTimeout(() => showWin('Assembled!', 'The face is complete!', () => selectGame('jigsaw')), 300);
+      }
+    });
+
+    board.appendChild(piece);
+  }
+
+  return () => {};
+}
+
+function shuffledScatter(n, boardSize, pw, ph) {
+  const positions = [];
+  for (let i = 0; i < n; i++) {
+    let x, y, ok;
+    let attempts = 0;
+    do {
+      ok = true;
+      x = Math.random() * (boardSize - pw);
+      y = Math.random() * (boardSize - ph);
+      for (const p of positions) {
+        if (Math.abs(p.x - x) < pw * 0.6 && Math.abs(p.y - y) < ph * 0.6) { ok = false; break; }
+      }
+      attempts++;
+    } while (!ok && attempts < 30);
+    positions.push({x, y});
+  }
+  return positions;
+}
+
+function makeDraggable(el, board, pw, ph, snapDist, onPlace) {
+  const idx = parseInt(el.dataset.idx);
+  const targetCol = idx % GRID;
+  const targetRow = Math.floor(idx / GRID);
+
+  let startX, startY, startLeft, startTop, dragging = false;
+
+  function getTargetPos() {
+    const bw = board.offsetWidth;
+    const bh = board.offsetHeight;
+    return {
+      x: targetCol * (bw / GRID),
+      y: targetRow * (bh / GRID)
+    };
+  }
+
+  function onDown(cx, cy) {
+    if (el.classList.contains('placed')) return;
+    dragging = true;
+    const rect = board.getBoundingClientRect();
+    startX = cx - rect.left;
+    startY = cy - rect.top;
+    startLeft = parseFloat(el.style.left);
+    startTop = parseFloat(el.style.top);
+    el.classList.add('dragging');
+    el.style.zIndex = 100;
+  }
+
+  function onMove(cx, cy) {
+    if (!dragging) return;
+    const rect = board.getBoundingClientRect();
+    const bw = board.offsetWidth, bh = board.offsetHeight;
+    let newLeft = cx - rect.left - (startX - startLeft);
+    let newTop  = cy - rect.top  - (startY - startTop);
+    newLeft = Math.max(0, Math.min(bw - pw, newLeft));
+    newTop  = Math.max(0, Math.min(bh - ph, newTop));
+    el.style.left = newLeft + 'px';
+    el.style.top  = newTop  + 'px';
+  }
+
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove('dragging');
+    const tp = getTargetPos();
+    const curLeft = parseFloat(el.style.left);
+    const curTop  = parseFloat(el.style.top);
+    if (Math.abs(curLeft - tp.x) < snapDist && Math.abs(curTop - tp.y) < snapDist) {
+      el.style.left = tp.x + 'px';
+      el.style.top  = tp.y + 'px';
+      el.style.zIndex = 1;
+      el.classList.add('placed');
+      onPlace();
+    }
+  }
+
+  el.addEventListener('mousedown', e => { e.preventDefault(); onDown(e.clientX, e.clientY); });
+  window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+  window.addEventListener('mouseup', onUp);
+
+  el.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; onDown(t.clientX, t.clientY); }, {passive: false});
+  window.addEventListener('touchmove', e => { const t = e.touches[0]; onMove(t.clientX, t.clientY); }, {passive: true});
+  window.addEventListener('touchend', onUp);
+}
+
+// ══════════════════════════════════════════════════════════
+// 4. FACE REVEAL
+// ══════════════════════════════════════════════════════════
+function revealHTML() {
+  return `
+  <div class="game-header">
+    <span class="game-title">Face Reveal</span>
+    <div class="stats">
+      <span id="rev-clicks">Clicks: 0</span>
+      <span id="rev-left">Left: ${N}</span>
+    </div>
+    <button class="btn" onclick="selectGame('reveal')">Restart</button>
+  </div>
+  <div id="reveal-grid"></div>`;
+}
+
+function initReveal() {
+  const grid = $('reveal-grid');
+  grid.innerHTML = '';
+  let clicks = 0, revealed = 0;
+
+  for (let i = 0; i < N; i++) {
+    const col = i % GRID;
+    const row = Math.floor(i / GRID);
+
+    const tile = document.createElement('div');
+    tile.className = 'reveal-tile';
+
+    tile.innerHTML = `
+      <img src="${IMG}" alt="" style="
+        object-position: ${-(col*100)}% ${-(row*100)}%;
+        width: ${GRID*100}%;
+        height: ${GRID*100}%;
+        max-width: none;
+        display: block;
+      ">
+      <div class="reveal-cover">✦</div>`;
+
+    tile.addEventListener('click', () => {
+      if (tile.classList.contains('revealed')) return;
+      clicks++;
+      tile.classList.add('revealed');
+      revealed++;
+      $('rev-clicks').textContent = `Clicks: ${clicks}`;
+      $('rev-left').textContent = `Left: ${N - revealed}`;
+      if (revealed === N) {
+        setTimeout(() => showWin('Revealed!', `You uncovered every tile in ${clicks} clicks!`, () => selectGame('reveal')), 400);
+      }
+    });
+
+    grid.appendChild(tile);
+  }
+
+  return () => {};
+}
+
+// ── Helpers ───────────────────────────────────────────────
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// Start on Memory Match
+selectGame('memory');
+</script>
+</body>
+</html>
